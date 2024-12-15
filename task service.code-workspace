@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "MAG-system"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive",
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}
