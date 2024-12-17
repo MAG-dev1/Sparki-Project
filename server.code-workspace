@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../Documents/proyectos propios/Sistema De gestion de tareas para estudiantes/server"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "automatic",
+		"java.configuration.updateBuildConfiguration": "automatic"
+	}
+}

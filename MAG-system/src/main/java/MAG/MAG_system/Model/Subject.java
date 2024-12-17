@@ -17,13 +17,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import static  MAG.MAG_system.Constant.TableConstant.SUBJECT_TABLE;
 
 @Entity
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "subjects", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "name" }))
+@Table(name = SUBJECT_TABLE, uniqueConstraints = @UniqueConstraint(columnNames = { "id", "name" }))
 public class Subject {
 
     @Id

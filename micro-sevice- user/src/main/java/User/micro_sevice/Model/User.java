@@ -37,4 +37,6 @@ public class User {
     @Size(min = 2, message = "{validation.name.size.too_short}")
     @Size(max = 200, message = "{validation.name.size.too_long}")
     private String password;
+
+    private String rol;
 }

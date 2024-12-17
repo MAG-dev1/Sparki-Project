@@ -9,11 +9,14 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import static  MAG.MAG_system.Constant.TableConstant.TASK_TABLE;
 
 @Entity
 @Data
+@Table(name = TASK_TABLE)
 public class Task {
     
     @Id

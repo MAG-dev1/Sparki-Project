@@ -1,0 +1,42 @@
+services:
+  eureka-server:
+    image: server:latest
+    build:
+      context: ./server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - mynetwork
+
+  MAG-system-Task:
+    image: mag-system-task:latest
+    build:
+      context: ./MAG-system
+    container_name: MAG-system-Task
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+    networks:
+      - mynetwork
+
+  micro-sevice:
+    image: micro-sevice:latest
+    build:
+      context: ./micro-sevice- user
+    container_name: micro-sevice
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
