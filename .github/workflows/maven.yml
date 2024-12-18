@@ -31,7 +31,7 @@ jobs:
         mvn test
         cd ..
 
-        cd micro-sevice-user
+        cd micro-sevice- user
         mvn -B package
         mvn test
         cd ..
