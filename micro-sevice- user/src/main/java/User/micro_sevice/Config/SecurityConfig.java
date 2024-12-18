@@ -1,5 +1,7 @@
 package User.micro_sevice.Config;
 
+import java.net.Authenticator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import User.micro_sevice.Filter.JwtAuthFilter;
 import User.micro_sevice.Service.UserService;
 
 @Configuration
@@ -25,8 +29,7 @@ import User.micro_sevice.Service.UserService;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private User.micro_sevice.Filter.JwtAuthFilter authFilter;
+   
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -34,11 +37,17 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtAuthFilter auth(){
+        return new JwtAuthFilter();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
+                .requestMatchers("/users", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/auth/login").permitAll()
                 .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
                 .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated() // Protect all other endpoints
@@ -47,7 +56,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No sessions
             )
             .authenticationProvider(authenticationProvider()) // Custom authentication provider
-            .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter
+            .addFilterBefore(auth(), UsernamePasswordAuthenticationFilter.class); // Add JWT filter
 
         return http.build();
     }

@@ -1,9 +1,18 @@
 package User.micro_sevice.Model;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -33,10 +42,18 @@ public class User {
     @Email
     private String email;
 
+    private String username;
+
     @NotNull
     @Size(min = 2, message = "{validation.name.size.too_short}")
     @Size(max = 200, message = "{validation.name.size.too_long}")
     private String password;
 
-    private String rol;
+    @ManyToOne(fetch = FetchType.EAGER)  // Un usuario tiene un solo rol
+    @JoinColumn(name = "role_id")
+    private Rol rol;
+
+    public String getUsername() {
+        return username;
+    }
 }
