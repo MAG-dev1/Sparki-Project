@@ -23,8 +23,11 @@ jobs:
       run: |
         cd server
         mvn -B package
-        mvn spring-boot:run 
+        mvn spring-boot:run &
         cd ..
+    - name: Wait for Eureka to start
+      run: |
+        sleep 30 # Ajusta este tiempo si es necesario
     - name: Build microservices and test
       run:  |
         cd MAG-system
