@@ -19,6 +19,15 @@ jobs:
         java-version: '22'
         distribution: 'temurin'
         cache: maven
+    - name: Build and start Eureka server
+      run: |
+        cd eureka-server
+        mvn -B package
+        nohup mvn spring-boot:run & 
+        cd ..
+    - name: Wait for Eureka to start
+      run: |
+        sleep 20 # Espera que Eureka inicie (ajusta el tiempo según sea necesario)
     - name: Build microservices and test
       run:  |
         cd MAG-system
