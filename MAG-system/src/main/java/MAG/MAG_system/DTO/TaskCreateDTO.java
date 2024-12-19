@@ -6,6 +6,8 @@ public record TaskCreateDTO(
         String name,
         String description,
         TaskType type,
+        String semester,
+        Long days,
         Integer score
 ) {
 

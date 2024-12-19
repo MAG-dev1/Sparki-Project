@@ -3,6 +3,7 @@ package MAG.MAG_system.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
+import MAG.MAG_system.DTO.SubjectGetDTO;
 import MAG.MAG_system.DTO.TaskCreateDTO;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Services.SubjectService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -32,35 +34,30 @@ public class SubjectController {
     @GetMapping("/{id_user}")
     public ResponseEntity<?> getAllSubjects(@RequestParam("id_user") @Valid Long idUser) {
 
-        List<Subject> subjects = subjectService.getAllSubjects(idUser);
+        List<SubjectGetDTO> subjects = subjectService.getAllSubjects(idUser);
         if (subjects.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(subjects);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createUser(@RequestBody SubjectCreatedDTO subject) {
-        Subject sub = subjectService.createSubject(subject);
-        sub.setIdSubject(-1L);
+    public ResponseEntity<?> createSubject(@RequestBody SubjectCreatedDTO subject, @RequestHeader("Authorization") String tokenHeader) throws Exception {
+        String token = tokenHeader.replace("Bearer ", "");
+        SubjectGetDTO sub = subjectService.createSubject(subject, token);
         return ResponseEntity.ok(sub);
     }
 
     @PutMapping("/{name}")
-    public ResponseEntity<?> editByName (@RequestParam String name, @RequestBody SubjectCreatedDTO subject) {
+    public ResponseEntity<?> editSubjectByName (@RequestParam String name, @RequestBody SubjectCreatedDTO subject) {
         return ResponseEntity.ok(subjectService.editSubjectByName(name, subject));
     }
     
     @DeleteMapping("/{name}")
-    public ResponseEntity<?> deleteByName(@RequestParam("name") String name){
+    public ResponseEntity<?> deleteSubjectByName(@RequestParam("name") String name){
         subjectService.deleteSubjectByName(name);
         return ResponseEntity.ok("deleted!");
     }
 
-    //associations operations
-
-    @PostMapping("/{name}")
-    public  ResponseEntity<?> createTask(@RequestParam String name, @RequestBody TaskCreateDTO task) {
-        return ResponseEntity.ok("created!");
-    }
+   
     
     
 }

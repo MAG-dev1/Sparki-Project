@@ -1,8 +1,12 @@
 package MAG.MAG_system.Services;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +15,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import MAG.MAG_system.Component.SubjectMapper;
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
+import MAG.MAG_system.DTO.SubjectGetDTO;
 import MAG.MAG_system.Exception.SubjectNotFoundException;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Repository.SubjectRepository;
@@ -32,19 +38,28 @@ public class SubjectService {
     @Value("${host.user.service.url}")
     private String hostUserService;
 
-    public List<Subject> getAllSubjects(Long idUser) {
-        idUserExists(idUser);
-        return subjectRepository.findByIdUser(idUser);
+    @Autowired
+    private SubjectMapper subjectMapper;
+
+    public List<SubjectGetDTO> getAllSubjects(Long idUser) {
+
+        List<SubjectGetDTO> subjects = new ArrayList<>();
+        for (Subject subject : subjectRepository.findByIdUser(idUser)) {
+            SubjectGetDTO sub = subjectMapper.toGetDTO(subject);
+            subjects.add(sub);
+        }
+        return subjects;
     }
 
-    public Subject createSubject(SubjectCreatedDTO subject) {
+    public SubjectGetDTO createSubject(SubjectCreatedDTO subject, String token) throws Exception {
 
-        Long idUser = subject.idUser();
-        idUserExists(idUser);
+    
+        var id = hasAuthorization(token);
+      
 
         Subject sub = Subject
                 .builder()
-                .idUser(idUser)
+                .idUser(id)
                 .name(subject.name())
                 .description(subject.description())
                 .semester(subject.semester())
@@ -54,10 +69,10 @@ public class SubjectService {
                 .build();
 
         subjectRepository.save(sub);
-        return sub;
+        return subjectMapper.toGetDTO(sub);
     }
 
-    public Subject editSubjectByName(String name, SubjectCreatedDTO subjectDTO) {
+    public SubjectGetDTO editSubjectByName(String name, SubjectCreatedDTO subjectDTO) {
 
         Subject subject = subjectRepository
                 .findByName(subjectDTO.name())
@@ -69,7 +84,7 @@ public class SubjectService {
         subject.setGrade(subjectDTO.grade());
 
         subjectRepository.save(subject);
-        return subject;
+        return subjectMapper.toGetDTO(subject);
     }
 
     @Transactional
@@ -77,7 +92,7 @@ public class SubjectService {
         subjectRepository.deleteByName(name);
     }
 
-    private User idUserExists(Long idUser) {
+    private User getUserData(Long idUser, String token) {
         UriComponents builder = UriComponentsBuilder
                 .fromUriString(hostUserService + "/users/{id}")
                 .buildAndExpand(idUser);
@@ -92,7 +107,28 @@ public class SubjectService {
         return user.block();
     }
 
+    private Long hasAuthorization(String token) throws Exception{
+
+        UriComponents builder = UriComponentsBuilder
+                .fromUriString(hostUserService + "/auth/authorize")
+                .build();
+            
+
+        return webClientBuilder
+                .build()
+                .post()
+                .uri(builder.toUri())
+                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token)
+                .retrieve()
+                .bodyToMono(Long.class)
+                .block();
+        
+    }
+
     public Optional<Subject> existsByName(String name) {
         return subjectRepository.findByName(name);
     }
+
+    
 }

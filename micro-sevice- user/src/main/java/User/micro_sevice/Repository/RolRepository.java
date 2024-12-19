@@ -3,7 +3,6 @@ package User.micro_sevice.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import User.micro_sevice.Model.Rol;
-import java.util.List;
 import java.util.Optional;
 
 

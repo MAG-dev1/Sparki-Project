@@ -1,1 +1,1 @@
-docker-compose up --build con rebuild
+docker-compose up --build 

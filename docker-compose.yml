@@ -20,6 +20,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - eureka-server
+    volumes:
+      - ./logs:/app/logs
     networks:
       - mynetwork
 
@@ -34,6 +36,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - eureka-server
+    volumes:
+      - ./logs:/app/logs
     networks:
       - mynetwork
 
