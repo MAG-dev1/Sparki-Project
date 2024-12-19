@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Docker Compose
 
 on:
   push:
@@ -7,40 +7,36 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 22
-      uses: actions/setup-java@v4
-      with:
-        java-version: '22'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build and start Eureka server
-      run: |
-        cd server
-        mvn -B package
-        mvn spring-boot:run &
-        cd ..
-    - name: Wait for Eureka to start
-      run: |
-        sleep 30 # Ajusta este tiempo si es necesario
-    - name: Build microservices and test
-      run:  |
-        cd MAG-system
-        mvn -B package
-        mvn test
-        cd ..
 
-        cd server
-        mvn -B package
-        mvn test
-        cd ..
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
 
-        cd "micro-sevice- user"
-        mvn -B package
-        mvn test
-        cd ..
+    - name: Build and start services with Docker Compose
+      run: |
+        docker-compose up -d --build
+        docker-compose ps
+
+    - name: Wait for services to start
+      run: |
+        sleep 20 # Ajusta según el tiempo que tarden los servicios en estar listos
+
+    - name: Run tests for MAG-system
+      run: |
+        docker exec -w /app MAG-system-Task mvn test
+
+    - name: Run tests for server
+      run: |
+        docker exec -w /app eureka-server mvn test
+
+    - name: Run tests for micro-service-user
+      run: |
+        docker exec -w /app micro-sevice mvn test
+
+    - name: Stop and remove Docker containers
+      run: |
+        docker-compose down
