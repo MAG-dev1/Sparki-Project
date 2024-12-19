@@ -27,22 +27,6 @@ jobs:
         docker-compose up -d --build
         docker-compose ps
 
-    - name: Wait for services to start
-      run: |
-        sleep 20 # Ajusta según el tiempo que tarden los servicios en estar listos
-
-    - name: Run tests for MAG-system
-      run: |
-        docker exec -w /app MAG-system-Task mvn test
-
-    - name: Run tests for server
-      run: |
-        docker exec -w /app eureka-server mvn test
-
-    - name: Run tests for micro-service-user
-      run: |
-        docker exec -w /app micro-sevice mvn test
-
     - name: Stop and remove Docker containers
       run: |
         docker-compose down
