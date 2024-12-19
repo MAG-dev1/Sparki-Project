@@ -21,7 +21,7 @@ jobs:
         cache: maven
     - name: Build and start Eureka server
       run: |
-        cd eureka-server
+        cd server
         mvn -B package
         mvn spring-boot:run 
         cd ..
