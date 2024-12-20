@@ -21,4 +21,10 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenException(InvalidTokenException e){
+        return ResponseEntity.status(401).build();
+    }
+
+
 }

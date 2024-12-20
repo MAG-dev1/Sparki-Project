@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import User.micro_sevice.DTO.AuthDTO;
+import User.micro_sevice.Exception.InvalidTokenException;
 import User.micro_sevice.Service.JwtService;
 import User.micro_sevice.Service.UserService;
 
@@ -61,7 +62,7 @@ public class AuthController {
     public ResponseEntity<?> authorize(@RequestHeader("Authorization") String tokenHeader) throws UserPrincipalNotFoundException{
 
         String token = tokenHeader.replace("Bearer ", "");
-        if(jwtService.isTokenExpired(token)) throw new RuntimeException("token expired!");
+        if(jwtService.isTokenExpired(token)) throw new InvalidTokenException("token expired!");
         String username = jwtService.extractUsername(token);
         
         return ResponseEntity.ok(userService.getUserByUsername(username).getId());
