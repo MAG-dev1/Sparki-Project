@@ -2,16 +2,24 @@ package MAG.MAG_system.Services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import MAG.MAG_system.Component.TaskMapper;
 import MAG.MAG_system.DTO.TaskCreateDTO;
+import MAG.MAG_system.DTO.TaskEditDTO;
 import MAG.MAG_system.DTO.TaskGetDTO;
 import MAG.MAG_system.Exception.SubjectNotFoundException;
+import MAG.MAG_system.Exception.TaskNotFoundException;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Model.Task;
 import MAG.MAG_system.Repository.TaskRepository;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
+
 import java.time.LocalDate;
 
 @Service
@@ -22,6 +30,9 @@ public class TaskService {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Autowired
     private MAG.MAG_system.Component.TaskMapper taskMapper;
@@ -53,17 +64,15 @@ public class TaskService {
         return taskMapper.toGetDTO(t);
     }
 
-    public void associateTaskToSubject(String name_subject, TaskCreateDTO task) {
+    public void associateTaskToSubject(String name_subject, TaskCreateDTO task, String token) throws Exception {
+        
+        tokenService.hasAuthorization(token);
         Subject sub = subjectService.existsByName(name_subject).orElseThrow(() -> new SubjectNotFoundException("Subject is invalid"));
-        Task taskCreated = Task.builder()
-        .name(task.name())
-        .subject(sub)
-        .description(task.description())
-        .type(task.type())
-        .semester(task.semester())
-        .created_date(LocalDate.now())
-        .expired_date(LocalDate.now().plusDays(task.days()))
-        .build();
+       
+        if (sub.getTasks().stream()
+            .anyMatch(t -> t.getName().equals(task.name()))) throw new IllegalArgumentException("task exists!");
+
+        Task taskCreated = TaskMapper.buildTask(task, sub);
         
         sub.getTasks().add(taskCreated);
         taskRepository.save(taskCreated);
@@ -71,5 +80,36 @@ public class TaskService {
 
 
     }
+
     
+    public TaskGetDTO editTask(String taskName, String subjectName, TaskEditDTO task, String token) throws Exception {
+        
+        tokenService.hasAuthorization(token);
+        Task taskRepo = taskRepository
+        .findByNameAndSubject(taskName, subjectService.existsByName(subjectName).orElseThrow(() -> new SubjectNotFoundException("subject is invalid")).getIdSubject())
+        .orElseThrow(() -> new TaskNotFoundException("task is invalid"));
+
+        setField(task.name(), taskRepo::setName);
+        setField(task.semester(), taskRepo::setSemester);
+        setField(task.description(), taskRepo::setDescription);
+        setField(task.score(), taskRepo::setScore);
+        setField(task.type(),taskRepo::setType);
+
+        taskRepository.save(taskRepo);
+        return taskMapper.toGetDTO(taskRepo);
+    }
+    
+    @Transactional
+    public void deleteTask(String taskName, String token) throws Exception{
+        tokenService.hasAuthorization(token);
+        Task taskRepo = taskRepository.findByName(taskName).orElseThrow(() -> new BadRequestException("name is required!"));
+        taskRepository.deleteById(taskRepo.getId());
+    }
+
+    private <T> void setField(T field, Consumer<T> function){
+        if (field != null) {
+            function.accept(field);
+        }
+    }
+
 }

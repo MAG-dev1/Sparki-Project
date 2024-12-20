@@ -32,17 +32,13 @@ public class SubjectService {
     private SubjectRepository subjectRepository;
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
-
-    @Autowired
-    @Value("${host.user.service.url}")
-    private String hostUserService;
+    private TokenService tokenService;
 
     @Autowired
     private SubjectMapper subjectMapper;
 
-    public List<SubjectGetDTO> getAllSubjects(Long idUser) {
-
+    public List<SubjectGetDTO> getAllSubjects(Long idUser, String token) throws Exception {
+        tokenService.hasAuthorization(token);
         List<SubjectGetDTO> subjects = new ArrayList<>();
         for (Subject subject : subjectRepository.findByIdUser(idUser)) {
             SubjectGetDTO sub = subjectMapper.toGetDTO(subject);
@@ -54,9 +50,8 @@ public class SubjectService {
     public SubjectGetDTO createSubject(SubjectCreatedDTO subject, String token) throws Exception {
 
     
-        var id = hasAuthorization(token);
+        var id = tokenService.hasAuthorization(token);
       
-
         Subject sub = Subject
                 .builder()
                 .idUser(id)
@@ -72,8 +67,8 @@ public class SubjectService {
         return subjectMapper.toGetDTO(sub);
     }
 
-    public SubjectGetDTO editSubjectByName(String name, SubjectCreatedDTO subjectDTO) {
-
+    public SubjectGetDTO editSubjectByName(String name, SubjectCreatedDTO subjectDTO, String token) throws Exception {
+        tokenService.hasAuthorization(token);
         Subject subject = subjectRepository
                 .findByName(subjectDTO.name())
                 .orElseThrow(() -> new SubjectNotFoundException("subject not found"));
@@ -88,42 +83,8 @@ public class SubjectService {
     }
 
     @Transactional
-    public void deleteSubjectByName(String name) {
+    public void deleteSubjectByName(String name, String token) {
         subjectRepository.deleteByName(name);
-    }
-
-    private User getUserData(Long idUser, String token) {
-        UriComponents builder = UriComponentsBuilder
-                .fromUriString(hostUserService + "/users/{id}")
-                .buildAndExpand(idUser);
-
-        Mono<User> user = webClientBuilder
-                .build()
-                .get()
-                .uri(builder.toUri())
-                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(User.class);
-        return user.block();
-    }
-
-    private Long hasAuthorization(String token) throws Exception{
-
-        UriComponents builder = UriComponentsBuilder
-                .fromUriString(hostUserService + "/auth/authorize")
-                .build();
-            
-
-        return webClientBuilder
-                .build()
-                .post()
-                .uri(builder.toUri())
-                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .bodyToMono(Long.class)
-                .block();
-        
     }
 
     public Optional<Subject> existsByName(String name) {

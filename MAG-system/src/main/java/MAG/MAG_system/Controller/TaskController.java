@@ -7,10 +7,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import MAG.MAG_system.DTO.TaskCreateDTO;
+import MAG.MAG_system.DTO.TaskEditDTO;
+import MAG.MAG_system.DTO.TaskGetDTO;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 @RestController
@@ -27,9 +32,23 @@ public class TaskController {
     
      //associations operations
 
-    @PostMapping("/associate/{name_subject}")
-    public  ResponseEntity<?> createTask(@RequestParam String name_subject, @RequestBody TaskCreateDTO task) {
-        taskService.associateTaskToSubject(name_subject, task);
+    @PostMapping("/associate")
+    public  ResponseEntity<?> createTask(@RequestParam String name_subject, @RequestBody TaskCreateDTO task, @RequestHeader("Authorization") String token) throws Exception {
+        taskService.associateTaskToSubject(name_subject, task, token);
         return ResponseEntity.ok("created!");
     }
+
+    @PatchMapping("/subjects")
+    public  ResponseEntity<?> editTask(@RequestParam String taskName, @RequestParam String subjectName, @RequestBody TaskEditDTO task, @RequestHeader("Authorization") String token) throws Exception{
+        TaskGetDTO taskEdited= taskService.editTask(taskName, subjectName, task, token);
+        return ResponseEntity.ok(taskEdited);
+    }
+
+    @DeleteMapping("")
+    public  ResponseEntity<?> deleteTask(@RequestParam String subjectName, @RequestHeader("Authorization") String token) throws Exception{
+        taskService.deleteTask(subjectName, token);
+        return ResponseEntity.ok("deleted!");
+    }
+
+    
 }

@@ -32,28 +32,27 @@ public class SubjectController {
 
     //basic operations
     @GetMapping("/{id_user}")
-    public ResponseEntity<?> getAllSubjects(@RequestParam("id_user") @Valid Long idUser) {
+    public ResponseEntity<?> getAllSubjects(@RequestParam("id_user") @Valid Long idUser,  @RequestHeader("Authorization") String token) throws Exception {
 
-        List<SubjectGetDTO> subjects = subjectService.getAllSubjects(idUser);
+        List<SubjectGetDTO> subjects = subjectService.getAllSubjects(idUser, token);
         if (subjects.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(subjects);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createSubject(@RequestBody SubjectCreatedDTO subject, @RequestHeader("Authorization") String tokenHeader) throws Exception {
-        String token = tokenHeader.replace("Bearer ", "");
+    public ResponseEntity<?> createSubject(@RequestBody SubjectCreatedDTO subject, @RequestHeader("Authorization") String token) throws Exception {
         SubjectGetDTO sub = subjectService.createSubject(subject, token);
         return ResponseEntity.ok(sub);
     }
 
     @PutMapping("/{name}")
-    public ResponseEntity<?> editSubjectByName (@RequestParam String name, @RequestBody SubjectCreatedDTO subject) {
-        return ResponseEntity.ok(subjectService.editSubjectByName(name, subject));
+    public ResponseEntity<?> editSubjectByName (@RequestParam String name, @RequestBody SubjectCreatedDTO subject,  @RequestHeader("Authorization") String token) throws Exception {
+        return ResponseEntity.ok(subjectService.editSubjectByName(name, subject, token));
     }
     
     @DeleteMapping("/{name}")
-    public ResponseEntity<?> deleteSubjectByName(@RequestParam("name") String name){
-        subjectService.deleteSubjectByName(name);
+    public ResponseEntity<?> deleteSubjectByName(@RequestParam String name,  @RequestHeader("Authorization") String token){
+        subjectService.deleteSubjectByName(name, token);
         return ResponseEntity.ok("deleted!");
     }
 

@@ -1,8 +1,12 @@
 package MAG.MAG_system.Component;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
+import MAG.MAG_system.DTO.TaskCreateDTO;
 import MAG.MAG_system.DTO.TaskGetDTO;
+import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Model.Task;
 
 @Component
@@ -19,5 +23,16 @@ public class TaskMapper {
             .build();
     }
 
- 
+    public static Task buildTask(TaskCreateDTO task, Subject sub){
+
+        return Task.builder()
+        .name(task.name())
+        .subject(sub)
+        .description(task.description())
+        .type(task.type())
+        .semester(task.semester())
+        .created_date(LocalDate.now())
+        .expired_date(LocalDate.now().plusDays(task.days()))
+        .build();
+    }
 }
