@@ -20,6 +20,7 @@ public class TaskMapper {
             .description(t.getDescription())
             .score(t.getScore())
             .type(t.getType())
+            .subject(t.getSubject().getName())
             .build();
     }
 
@@ -33,6 +34,7 @@ public class TaskMapper {
         .semester(task.semester())
         .created_date(LocalDate.now())
         .expired_date(LocalDate.now().plusDays(task.days()))
+        .score(task.score())
         .build();
     }
 }

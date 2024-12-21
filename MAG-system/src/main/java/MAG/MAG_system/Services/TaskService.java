@@ -41,7 +41,7 @@ public class TaskService {
         
         List<TaskGetDTO> tasks = new ArrayList<>();
         for (Task task : taskRepository.findAll()) {
-            tasks.add(toGetDTO(task));
+            tasks.add(taskMapper.toGetDTO(task));
         }
       
         return tasks;
@@ -60,11 +60,8 @@ public class TaskService {
         return tasks;
     }
 
-    private TaskGetDTO toGetDTO(Task t){
-        return taskMapper.toGetDTO(t);
-    }
 
-    public void associateTaskToSubject(String name_subject, TaskCreateDTO task, String token) throws Exception {
+    public TaskGetDTO associateTaskToSubject(String name_subject, TaskCreateDTO task, String token) throws Exception {
         
         tokenService.hasAuthorization(token);
         Subject sub = subjectService.existsByName(name_subject).orElseThrow(() -> new SubjectNotFoundException("Subject is invalid"));
@@ -76,7 +73,7 @@ public class TaskService {
         
         sub.getTasks().add(taskCreated);
         taskRepository.save(taskCreated);
-        
+        return taskMapper.toGetDTO(taskCreated);
 
 
     }

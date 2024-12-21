@@ -34,8 +34,8 @@ public class TaskController {
 
     @PostMapping("/associate")
     public  ResponseEntity<?> createTask(@RequestParam String name_subject, @RequestBody TaskCreateDTO task, @RequestHeader("Authorization") String token) throws Exception {
-        taskService.associateTaskToSubject(name_subject, task, token);
-        return ResponseEntity.ok("created!");
+        TaskGetDTO taskGet = taskService.associateTaskToSubject(name_subject, task, token);
+        return ResponseEntity.ok(taskGet);
     }
 
     @PatchMapping("/subjects")

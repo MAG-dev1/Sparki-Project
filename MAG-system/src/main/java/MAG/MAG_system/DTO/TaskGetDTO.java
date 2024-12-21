@@ -13,8 +13,8 @@ public record TaskGetDTO(
     TaskType type,
     Integer score,
     LocalDate created_date,
-    LocalDate expired_date
-
+    LocalDate expired_date,
+    String subject
 
 ) {
 

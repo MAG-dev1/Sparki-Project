@@ -29,4 +29,6 @@ public class GlobalException {
     public ResponseEntity<?> handleUnathorizedException(UnathorizedException exception) {
         return ResponseEntity.status(401).body("Unauthorized access");
     }
+
+    
 }

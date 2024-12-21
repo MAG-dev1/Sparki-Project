@@ -1,6 +1,7 @@
 package User.micro_sevice.Exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -26,5 +27,9 @@ public class GlobalException {
         return ResponseEntity.status(401).build();
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> handleUsernameNotFoundExceptionException(UsernameNotFoundException e){
+        return ResponseEntity.status(401).build();
+    }
 
 }
