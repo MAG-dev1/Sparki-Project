@@ -28,7 +28,7 @@ services:
   micro-sevice:
     image: micro-sevice:latest
     build:
-      context: ./micro-sevice- user
+      context: ./Micro-service-user
     container_name: micro-sevice
     ports:
       - "8081:8081"

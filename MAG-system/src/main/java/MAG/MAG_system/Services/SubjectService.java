@@ -2,19 +2,10 @@ package MAG.MAG_system.Services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import MAG.MAG_system.Component.SubjectMapper;
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
 import MAG.MAG_system.DTO.SubjectGetDTO;
@@ -22,8 +13,6 @@ import MAG.MAG_system.Exception.SubjectNotFoundException;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Repository.SubjectRepository;
 import jakarta.transaction.Transactional;
-import reactor.core.publisher.Mono;
-import MAG.MAG_system.Model.User;
 
 @Service
 public class SubjectService {

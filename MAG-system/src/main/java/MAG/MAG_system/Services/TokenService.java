@@ -8,7 +8,6 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import MAG.MAG_system.Exception.UnathorizedException;
-import MAG.MAG_system.Model.User;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -41,21 +40,6 @@ public class TokenService {
                 .bodyToMono(Long.class)
                 .block();
         
-    }
-
-    private User getUserData(Long idUser, String token) {
-        UriComponents builder = UriComponentsBuilder
-                .fromUriString(hostUserService + "/users/{id}")
-                .buildAndExpand(idUser);
-
-        Mono<User> user = webClientBuilder
-                .build()
-                .get()
-                .uri(builder.toUri())
-                .accept(org.springframework.http.MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(User.class);
-        return user.block();
     }
 
 }

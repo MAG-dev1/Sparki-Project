@@ -4,8 +4,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
 import MAG.MAG_system.DTO.SubjectGetDTO;
-import MAG.MAG_system.DTO.TaskCreateDTO;
-import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Services.SubjectService;
 import jakarta.validation.Valid;
 

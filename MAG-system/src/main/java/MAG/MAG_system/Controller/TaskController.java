@@ -46,8 +46,8 @@ public class TaskController {
 
     @DeleteMapping("")
     public  ResponseEntity<?> deleteTask(@RequestParam String subjectName, @RequestHeader("Authorization") String token) throws Exception{
-        taskService.deleteTask(subjectName, token);
-        return ResponseEntity.ok("deleted!");
+        TaskGetDTO task = taskService.deleteTask(subjectName, token);
+        return ResponseEntity.ok(task);
     }
 
     

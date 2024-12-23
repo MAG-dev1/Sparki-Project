@@ -3,8 +3,6 @@ package MAG.MAG_system.Services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,6 @@ import MAG.MAG_system.Model.Task;
 import MAG.MAG_system.Repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
-
-import java.time.LocalDate;
 
 @Service
 public class TaskService {
@@ -97,10 +93,11 @@ public class TaskService {
     }
     
     @Transactional
-    public void deleteTask(String taskName, String token) throws Exception{
+    public TaskGetDTO deleteTask(String taskName, String token) throws Exception{
         tokenService.hasAuthorization(token);
         Task taskRepo = taskRepository.findByName(taskName).orElseThrow(() -> new BadRequestException("name is required!"));
         taskRepository.deleteById(taskRepo.getId());
+        return taskMapper.toGetDTO(taskRepo);
     }
 
     private <T> void setField(T field, Consumer<T> function){
