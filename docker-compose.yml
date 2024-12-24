@@ -12,7 +12,7 @@ services:
   MAG-system-Task:
     image: mag-system-task:latest
     build:
-      context: ./MAG-system
+      context: ./Task-service
     container_name: MAG-system-Task
     ports:
       - "8080:8080"

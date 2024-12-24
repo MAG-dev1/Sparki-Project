@@ -1,9 +1,12 @@
 package User.micro_sevice.Service;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.Collections;
-import java.util.List;
-
+import User.micro_sevice.DTO.CreateUserDTO;
+import User.micro_sevice.DTO.EditUserDTO;
+import User.micro_sevice.Model.Rol;
+import User.micro_sevice.Model.User;
+import User.micro_sevice.Repository.RolRepository;
+import User.micro_sevice.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,13 +18,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import User.micro_sevice.DTO.CreateUserDTO;
-import User.micro_sevice.DTO.EditUserDTO;
-import User.micro_sevice.Model.Rol;
-import User.micro_sevice.Model.User;
-import User.micro_sevice.Repository.RolRepository;
-import User.micro_sevice.Repository.UserRepository;
-import jakarta.transaction.Transactional;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {

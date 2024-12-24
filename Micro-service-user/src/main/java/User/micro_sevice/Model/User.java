@@ -12,10 +12,7 @@ import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -37,6 +34,7 @@ public class User {
     @Email
     private String email;
 
+    @Getter
     @NotNull
     @Size(min = 2, message = "{validation.name.size.too_short}")
     @Size(max = 200, message = "{validation.name.size.too_long}")
@@ -51,7 +49,4 @@ public class User {
     @JoinColumn(name = "role_id")
     private Rol rol;
 
-    public String getUsername() {
-        return username;
-    }
 }
