@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import User.micro_sevice.DTO.CreateUserDTO;
 import User.micro_sevice.DTO.EditUserDTO;
+import User.micro_sevice.DTO.GetUserDTO;
 import User.micro_sevice.Model.User;
 import User.micro_sevice.Service.UserService;
 
@@ -48,7 +49,7 @@ public class UserController {
     //@PreAuthorize("hasAuthority('ADMIN_ROLE')")
     public ResponseEntity<?> createUser(@RequestBody CreateUserDTO user) throws BadRequestException {
         
-        User userSaved = userService.createUser(user);
+        GetUserDTO userSaved = userService.createUser(user);
         return ResponseEntity.ok(userSaved);
     }
 

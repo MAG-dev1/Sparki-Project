@@ -19,7 +19,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor 
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "id", "username" }))
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "username" }))
 public class User {
 
     @Id

@@ -2,6 +2,8 @@ package User.micro_sevice.Service;
 
 import User.micro_sevice.DTO.CreateUserDTO;
 import User.micro_sevice.DTO.EditUserDTO;
+import User.micro_sevice.DTO.GetUserDTO;
+import User.micro_sevice.Mapper.UserMapper;
 import User.micro_sevice.Model.Rol;
 import User.micro_sevice.Model.User;
 import User.micro_sevice.Repository.RolRepository;
@@ -36,6 +38,10 @@ public class UserService implements UserDetailsService {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean UserMapper userkMapper(){
+        return new UserMapper();
+    }
+
     public User getUser(Long id) throws UserPrincipalNotFoundException {
         return userRepository.findById(id)
         .orElseThrow(() -> new UserPrincipalNotFoundException("no se ha encontrado al user de id: " + id));
@@ -51,7 +57,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public User createUser(CreateUserDTO user) throws BadRequestException{
+    public GetUserDTO createUser(CreateUserDTO user) throws BadRequestException{
 
         Rol newRole = Rol.builder().name(user.rol().toString()).build();
         Rol rol = rolRepository.findByName(user.rol().name()).orElse(null);
@@ -69,7 +75,7 @@ public class UserService implements UserDetailsService {
         .build();
 
         userRepository.save(userSaved);
-        return userSaved;
+        return userkMapper().toDTO(userSaved);
     }
 
     @Override

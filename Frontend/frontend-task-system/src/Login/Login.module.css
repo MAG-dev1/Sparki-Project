@@ -1,0 +1,102 @@
+
+
+.login_container {
+  background: #86e6e5;
+  padding: 40px; /* Mayor separación interna */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  justify-self: center;
+  align-self: center;
+  place-self: center;
+  margin-top: 20vh;
+}
+
+.login_form h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+}
+
+.form_group {
+  margin-bottom: 20px; /* Separación entre los campos */
+}
+
+.form_group label {
+  display: block;
+  margin-bottom: 8px; /* Espaciado entre el label y el input */
+  font-size: 14px;
+  color: #555;
+}
+
+.form_group input {
+  width: 95%;
+  padding: 12px; /* Mayor separación interna en el input */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.login_btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login_btn:hover {
+  background-color: #0056b3;
+}
+
+.register {
+  width: fit-content;
+  padding: 12px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.register:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 600px) {
+  .login_container {
+    padding: 20px; /* Ajustar padding para pantallas pequeñas */
+    width: 80vw;
+  }
+
+  .login_form h2 {
+    font-size: 20px;
+  }
+
+  .form_group input {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .login_btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .register {
+    width: fit-content;
+  }
+}
