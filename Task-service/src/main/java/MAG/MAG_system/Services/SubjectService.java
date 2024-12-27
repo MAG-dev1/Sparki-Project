@@ -10,9 +10,12 @@ import MAG.MAG_system.Component.SubjectMapper;
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
 import MAG.MAG_system.DTO.SubjectGetDTO;
 import MAG.MAG_system.Exception.SubjectNotFoundException;
+import MAG.MAG_system.Factory.SubjectFactory;
 import MAG.MAG_system.Model.Subject;
+import MAG.MAG_system.Model.SubjectStatus;
 import MAG.MAG_system.Repository.SubjectRepository;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.BadRequestException;
 
 @Service
 public class SubjectService {
@@ -22,6 +25,9 @@ public class SubjectService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private SubjectFactory subjectFactory;
 
     @Autowired
     private SubjectMapper subjectMapper;
@@ -40,18 +46,8 @@ public class SubjectService {
 
     
         var id = tokenService.hasAuthorization(token);
-      
-        Subject sub = Subject
-                .builder()
-                .idUser(id)
-                .name(subject.name())
-                .description(subject.description())
-                .semester(subject.semester())
-                .created_date(LocalDate.now())
-                .status(subject.status())
-                .grade(subject.grade())
-                .build();
-
+        Subject sub = subjectFactory.createSubject(subject, id);
+        
         subjectRepository.save(sub);
         return subjectMapper.toGetDTO(sub);
     }

@@ -18,7 +18,7 @@ public class TaskMapper {
             .expired_date(t.getExpired_date())
             .name(t.getName())
             .description(t.getDescription())
-            .score(t.getScore())
+            .score(t.getImportance())
             .type(t.getType())
             .subject(t.getSubject().getName())
             .build();
@@ -34,7 +34,7 @@ public class TaskMapper {
         .semester(task.semester())
         .created_date(LocalDate.now())
         .expired_date(LocalDate.now().plusDays(task.days()))
-        .score(task.score())
+        .importance(task.importance())
         .build();
     }
 }

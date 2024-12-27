@@ -7,7 +7,7 @@ public record TaskEditDTO(
         String description,
         TaskType type,
         String semester,
-        Integer score
+        Integer importance
 ) {
 
 }

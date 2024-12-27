@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.css";
+import createTask from "./createTask";
 
 function Dasboard() {
   const taskSectionRef = useRef(null);
@@ -24,7 +25,6 @@ function Dasboard() {
       .then((data) => {
         if (data) {
           console.log(data);
-          //let tasks = setdata(data);
           setTasks(data);
           localStorage.setItem("tasks", JSON.stringify(tasks));
         } else {
@@ -36,27 +36,6 @@ function Dasboard() {
       });
   }, []);
 
-  function setdata(newTasks) {
-    let tasks = [];
-    newTasks.forEach((taskData) => {
-      const taskRow = document.createElement("tr");
-
-      taskRow.innerHTML = `
-          <td>${taskData.description}</td>
-          <td>${taskData.subject}</td>
-          <td> ${taskData.expired_date}</td>
-          <td>${taskData.score}</td>
-          <td>${taskData.type}</td>
-        `;
-
-      if (taskSectionRef.current) {
-        taskSectionRef.current.appendChild(taskRow);
-      }
-      tasks.push(taskData);
-    });
-    return tasks;
-  }
-
   function HandleaddTaskButton(e) {
     e.preventDefault();
     toggleModal();
@@ -65,23 +44,26 @@ function Dasboard() {
   function toggleModal() {
     setIsModalOpen(!isModalOpen);
   }
+
   function handleSubmit(e) {
+
     e.preventDefault();
+
     const taskData = {
       name: e.target.name.value,
       description: e.target.description.value,
       type: e.target.type.value,
       semester: e.target.semester.value,
       days: parseInt(e.target.days.value, 10),
-      score: parseInt(e.target.score.value, 10),
+      importance: parseInt(e.target.importance.value, 10),
     };
 
-    console.log("Task Data:", taskData);
     let name_subject = e.target.subject.value;
-    console.log(localStorage.getItem("authToken"));
-    execute(taskData, name_subject);
+    let data = createTask(taskData, name_subject);
 
+    setTasks((prevTasks) => [...prevTasks, data]);
     toggleModal();
+    
     e.target.reset();
   }
 
@@ -101,31 +83,11 @@ function Dasboard() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        addTask(data);
+        setTasks((prevTasks) => [...prevTasks, data]);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-  }
-
-  function addTask(taskData) {
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    tasks.push(taskData);
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-
-    let taskRow = document.createElement("tr");
-
-    taskRow.innerHTML = `
-          <td>${taskData.description}</td>
-          <td>${taskData.subject}</td>
-          <td> ${taskData.expired_date}</td>
-          <td>${taskData.score}</td>
-          <td>${taskData.type}</td>
-        `;
-
-    if (taskSectionRef.current) {
-      taskSectionRef.current.appendChild(taskRow);
-    }
   }
 
   return (
@@ -138,7 +100,7 @@ function Dasboard() {
         <section className={styles.cards}>
           <div className={styles.card}>
             <h3>Tareas Pendientes</h3>
-            <p>5 Tareas</p>
+            <p>{tasks.length} Tareas</p>
           </div>
           <div className={styles.card}>
             <h3>Materias Activas</h3>
@@ -155,6 +117,12 @@ function Dasboard() {
             onClick={HandleaddTaskButton}
           >
             añadir tarea
+          </button>
+          <button
+             className={styles.button_add_subject}
+            type="submit"
+          >
+            añadir Materia
           </button>
         </section>
         <table className={styles.table}>
@@ -210,13 +178,12 @@ function Dasboard() {
               </div>
               <div>
                 <label htmlFor="type">Type:</label>
-                <input
-                  type="text"
-                  id="type"
-                  name="type"
-                  placeholder="Enter task type"
-                  required
-                />
+                <select id="type" name="type" required>
+                  <option value="DAYLY">DAYLY</option>
+                  <option value="WEEKLY">WEEKLY</option>
+                  <option value="MONTHLY">MONTHLY</option>
+                  <option value="ANNUAL">ANNUAL</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="semester">Semester:</label>
@@ -239,12 +206,12 @@ function Dasboard() {
                 />
               </div>
               <div>
-                <label htmlFor="score">Score:</label>
+                <label htmlFor="importance">Importance:</label>
                 <input
                   type="number"
-                  id="score"
-                  name="score"
-                  placeholder="Enter score"
+                  id="importance"
+                  name="importance"
+                  placeholder="Enter importance"
                   required
                 />
               </div>

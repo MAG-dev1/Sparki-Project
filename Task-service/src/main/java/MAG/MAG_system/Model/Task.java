@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +37,7 @@ public class Task {
     private String name;
 
     @Nonnull
+    @Pattern(regexp = "^[1-2]-\\d{4}$", message = "Invalid semester format. Expected format: 1-YYYY or 2-YYYY")
     private String semester;
 
     @Nonnull
@@ -53,7 +55,7 @@ public class Task {
     private LocalDate expired_date;
 
     @Nullable
-    private Integer score;
+    private Integer importance;
 
     
     @ManyToOne

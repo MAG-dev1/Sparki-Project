@@ -32,8 +32,30 @@ header {
 }
 
 .button_add_task {
+  margin: 0;
   margin-left: auto;
   height: 50px;
+  margin-top: 1rem;
+  background-color: #3b66a5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.button_add_subject{
+  
+  height: 50px;
+  margin-top: 1rem;
+  background-color: #3b66a5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
 .button_add_task:hover {
@@ -48,7 +70,7 @@ header {
 .table th,
 .table td {
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid black;
   text-align: center;
 }
 /* Responsive Design */
@@ -104,6 +126,10 @@ header {
   .table td {
     font-size: 0.5rem;
   }
+
+  .button_add_task {
+    width: 100%;
+  }
 }
 
 .modal {
@@ -128,6 +154,8 @@ header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   animation: fadeIn 0.3s; /* Animación de entrada */
 }
+
+
 
 
 @keyframes fadeIn {
@@ -173,4 +201,5 @@ select {
   border-radius: 4px;
   box-sizing: border-box;
 }
+
 

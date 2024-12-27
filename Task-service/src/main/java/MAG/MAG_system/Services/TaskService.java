@@ -85,7 +85,7 @@ public class TaskService {
         setField(task.name(), taskRepo::setName);
         setField(task.semester(), taskRepo::setSemester);
         setField(task.description(), taskRepo::setDescription);
-        setField(task.score(), taskRepo::setScore);
+        setField(task.importance(), taskRepo::setImportance);
         setField(task.type(),taskRepo::setType);
 
         taskRepository.save(taskRepo);
