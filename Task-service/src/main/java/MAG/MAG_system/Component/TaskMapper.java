@@ -1,6 +1,7 @@
 package MAG.MAG_system.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
@@ -32,8 +33,8 @@ public class TaskMapper {
         .description(task.description())
         .type(task.type())
         .semester(task.semester())
-        .created_date(LocalDate.now())
-        .expired_date(LocalDate.now().plusDays(task.days()))
+        .created_date(LocalDateTime.now())
+        .expired_date(LocalDateTime.now().plusDays(task.days()))
         .importance(task.importance())
         .build();
     }

@@ -1,4 +1,4 @@
-package Notification.micro_service
+package package Notification.micro_service.interface.Adapter
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

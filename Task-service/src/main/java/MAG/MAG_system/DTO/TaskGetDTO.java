@@ -1,6 +1,7 @@
 package MAG.MAG_system.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import MAG.MAG_system.Model.TaskType;
 import lombok.Builder;
@@ -12,8 +13,8 @@ public record TaskGetDTO(
     String description,
     TaskType type,
     Integer score,
-    LocalDate created_date,
-    LocalDate expired_date,
+    LocalDateTime created_date,
+    LocalDateTime  expired_date,
     String subject
 
 ) {

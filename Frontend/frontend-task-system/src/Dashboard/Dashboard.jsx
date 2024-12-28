@@ -1,14 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.css";
 import createTask from "./createTask";
+import getTasks from "./getTasks";
 
 function Dasboard() {
   const taskSectionRef = useRef(null);
   const task_url = import.meta.env.VITE_BACKEND_TASK;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
 
+  const [isModalOpenSubject, setIsModalOpenSubject] = useState(false);
+
   useEffect(() => {
+   
     fetch(`${task_url}/tasks`, {
       method: "GET",
       headers: {
@@ -38,12 +43,18 @@ function Dasboard() {
 
   function HandleaddTaskButton(e) {
     e.preventDefault();
-    toggleModal();
+    toggleTaskModal();
   }
 
-  function toggleModal() {
+  function toggleTaskModal() {
     setIsModalOpen(!isModalOpen);
   }
+
+  const HandleAddSubjectButton = (e) => {
+    e.preventDefault();
+    setIsModalOpenSubject(!isModalOpenSubject);
+  }
+
 
   function handleSubmit(e) {
 
@@ -62,34 +73,12 @@ function Dasboard() {
     let data = createTask(taskData, name_subject);
 
     setTasks((prevTasks) => [...prevTasks, data]);
-    toggleModal();
+    toggleTaskModal();
     
     e.target.reset();
   }
 
-  function execute(data, name_subject) {
-    fetch(
-      `${task_url}/tasks/associate?name_subject=${encodeURIComponent(name_subject)}`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-        body: JSON.stringify(data),
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setTasks((prevTasks) => [...prevTasks, data]);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
-
+ 
   return (
     <>
       <header>
@@ -121,6 +110,7 @@ function Dasboard() {
           <button
              className={styles.button_add_subject}
             type="submit"
+            onClick={HandleAddSubjectButton}
           >
             añadir Materia
           </button>
@@ -151,7 +141,7 @@ function Dasboard() {
       {isModalOpen && (
         <div className={styles.modal}>
           <div className={styles.modal_content}>
-            <span className={styles.close} onClick={toggleModal}>
+            <span className={styles.close} onClick={toggleTaskModal}>
               &times;
             </span>
             <h2>Crear Tarea</h2>
@@ -211,7 +201,7 @@ function Dasboard() {
                   type="number"
                   id="importance"
                   name="importance"
-                  placeholder="Enter importance"
+                  placeholder="Enter importance (if needed)"
                   required
                 />
               </div>
@@ -226,6 +216,57 @@ function Dasboard() {
                 />
               </div>
               <button type="submit">Add Task</button>
+            </form>
+          </div>
+        </div>
+      )}
+      {isModalOpenSubject && (
+         <div className={styles.modal}>
+          <div className={styles.modal_content}>
+            <span className={styles.close} onClick={HandleAddSubjectButton}>
+              &times;
+            </span>
+            <h2>Crear Materia</h2>
+            <form id="create-subject-form" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="name">Nombre de la materia:</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter subject name"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="description">Semestre:</label>
+                <input
+                  type="text"
+                  id="semester"
+                  name="semester"
+                  placeholder="Enter semester"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="type">Estado:</label>
+                <select id="type" name="type" required>
+                  <option value="APPROVED">APPROVED</option>
+                  <option value="DISAPPROVED">DISAPPROVED</option>
+                  <option value="IN_PROGRESS">IN_PROGRESS</option>       
+                </select>
+              </div>
+              <div>
+                <label htmlFor="grade">Grade:</label>
+                <input
+                  type="text"
+                  id="grade"
+                  name="grade"
+                  placeholder="Enter grade (if needed)"
+                  required
+                />
+              </div>
+              <button type="submit">Add Subject</button>
             </form>
           </div>
         </div>

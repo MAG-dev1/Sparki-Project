@@ -1,6 +1,7 @@
 package MAG.MAG_system.Model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.annotation.Nonnull;
@@ -49,10 +50,10 @@ public class Task {
     private TaskType type;
 
     @Nonnull
-    private LocalDate created_date;
+    private LocalDateTime created_date;
 
     @Nonnull
-    private LocalDate expired_date;
+    private LocalDateTime expired_date;
 
     @Nullable
     private Integer importance;
