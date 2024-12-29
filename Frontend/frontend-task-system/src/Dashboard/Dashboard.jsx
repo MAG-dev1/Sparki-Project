@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.css";
 import createTask from "./createTask";
-import getTasks from "./getTasks";
+import createSubject from "./createSubject";
+
 
 function Dasboard() {
   const taskSectionRef = useRef(null);
@@ -11,9 +12,10 @@ function Dasboard() {
   const [tasks, setTasks] = useState([]);
 
   const [isModalOpenSubject, setIsModalOpenSubject] = useState(false);
+ 
 
   useEffect(() => {
-   
+    console.log(task_url);
     fetch(`${task_url}/tasks`, {
       method: "GET",
       headers: {
@@ -56,7 +58,7 @@ function Dasboard() {
   }
 
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
 
     e.preventDefault();
 
@@ -70,14 +72,31 @@ function Dasboard() {
     };
 
     let name_subject = e.target.subject.value;
-    let data = createTask(taskData, name_subject);
+    let data = await createTask(taskData, name_subject);
 
-    setTasks((prevTasks) => [...prevTasks, data]);
-    toggleTaskModal();
-    
-    e.target.reset();
+    if(data){
+      setTasks((prevTasks) => [...prevTasks, data]);
+      toggleTaskModal();
+      
+      e.target.reset();
+    }else {
+      console.error("Error: Task creation failed");
+    }
+
+   
   }
 
+  function createSubjectHandler(e) {
+    let data = {
+      username: localStorage.getItem("username"),
+      name: e.target.name.value,
+      semester: e.target.semester.value,
+      type: e.target.type.value,
+      grade: e.target.grade.value,
+      description: e.target.description.value
+    }
+    createSubject(data);
+  }
  
   return (
     <>
@@ -227,7 +246,7 @@ function Dasboard() {
               &times;
             </span>
             <h2>Crear Materia</h2>
-            <form id="create-subject-form" onSubmit={handleSubmit}>
+            <form id="create-subject-form" onSubmit={createSubjectHandler}>
               <div>
                 <label htmlFor="name">Nombre de la materia:</label>
                 <input
@@ -239,7 +258,17 @@ function Dasboard() {
                 />
               </div>
               <div>
-                <label htmlFor="description">Semestre:</label>
+                <label htmlFor="description">Descripcion:</label>
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  placeholder="Enter description"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="semester">Semestre:</label>
                 <input
                   type="text"
                   id="semester"
@@ -266,7 +295,7 @@ function Dasboard() {
                   required
                 />
               </div>
-              <button type="submit">Add Subject</button>
+              <button type="submit" onClick={createSubjectHandler}>Add Subject</button>
             </form>
           </div>
         </div>

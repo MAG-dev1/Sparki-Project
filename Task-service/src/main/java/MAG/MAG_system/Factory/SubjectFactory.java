@@ -4,19 +4,16 @@ import java.time.LocalDate;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import MAG.MAG_system.DTO.SubjectCreatedDTO;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Model.SubjectStatus;
 import jakarta.ws.rs.BadRequestException;
 
-@Configuration
+@Component
 public class SubjectFactory {
     
-    @Bean
-    public SubjectFactory subjectFactory(){
-        return new SubjectFactory();
-    }
     
     public Subject createSubject(SubjectCreatedDTO subject, Long id) throws Exception {
 

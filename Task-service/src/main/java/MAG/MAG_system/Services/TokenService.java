@@ -1,14 +1,20 @@
 package MAG.MAG_system.Services;
 
+import java.nio.channels.Channel;
+import java.time.Duration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import MAG.MAG_system.Exception.UnathorizedException;
+import io.netty.channel.ChannelOption;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 @Service
 public class TokenService {
@@ -28,6 +34,11 @@ public class TokenService {
             
 
         return webClientBuilder
+                .clientConnector(new ReactorClientHttpConnector(
+                    HttpClient
+                    .create()
+                    .responseTimeout(Duration.ofSeconds(60))
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000)))
                 .build()
                 .post()
                 .uri(builder.toUri())
