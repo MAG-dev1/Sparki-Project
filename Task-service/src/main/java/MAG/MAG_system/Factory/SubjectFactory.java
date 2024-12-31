@@ -23,6 +23,7 @@ public class SubjectFactory {
         return Subject
                 .builder()
                 .idUser(id)
+                .username(subject.username())
                 .name(subject.name())
                 .description(subject.description())
                 .semester(subject.semester())

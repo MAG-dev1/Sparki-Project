@@ -1,6 +1,5 @@
 package MAG.MAG_system.Model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import io.micrometer.common.lang.Nullable;
@@ -11,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import static  MAG.MAG_system.Constant.TableConstant.TASK_TABLE;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = TASK_TABLE)
+@Table(name = TASK_TABLE, uniqueConstraints = @UniqueConstraint(columnNames = { "name"}))
 public class Task {
     
     @Id

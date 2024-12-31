@@ -32,7 +32,7 @@ public class TaskMapper {
         .subject(sub)
         .description(task.description())
         .type(task.type())
-        .semester(task.semester())
+        .semester(sub.getSemester())
         .created_date(LocalDateTime.now())
         .expired_date(LocalDateTime.now().plusDays(task.days()))
         .importance(task.importance())

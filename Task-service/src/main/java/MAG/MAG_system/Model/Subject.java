@@ -25,7 +25,7 @@ import static  MAG.MAG_system.Constant.TableConstant.SUBJECT_TABLE;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = SUBJECT_TABLE, uniqueConstraints = @UniqueConstraint(columnNames = { "id", "name" }))
+@Table(name = SUBJECT_TABLE, uniqueConstraints = @UniqueConstraint(columnNames = { "idUser", "username", "name"}))
 public class Subject {
 
     @Id
@@ -34,6 +34,9 @@ public class Subject {
 
     @Nonnull
     private Long idUser;
+
+    @Nonnull
+    private String username;
     
     @Nonnull 
     @Size(min = 2, message = "{validation.name.size.too_short}")

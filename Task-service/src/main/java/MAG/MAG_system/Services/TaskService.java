@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import MAG.MAG_system.Component.TaskMapper;
+import MAG.MAG_system.DTO.SubjectGetDTO;
 import MAG.MAG_system.DTO.TaskCreateDTO;
 import MAG.MAG_system.DTO.TaskEditDTO;
 import MAG.MAG_system.DTO.TaskGetDTO;
@@ -106,4 +107,19 @@ public class TaskService {
         }
     }
 
+    public List<TaskGetDTO> getAllTasksByusername(String username, String token) throws Exception {
+    
+        ArrayList<TaskGetDTO> tasks = new ArrayList<>();
+        for (Subject subject : subjectService.getAllSubjectsByUsername(username, token)) {
+            if (subject.getUsername().equals(username)) {
+              
+                for (Task task: subject.getTasks()) {
+                    tasks.add(taskMapper.toGetDTO(task));
+                }
+            }
+        }
+        return tasks;
+    }
+
+   
 }

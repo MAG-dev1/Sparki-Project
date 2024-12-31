@@ -1,6 +1,5 @@
 package MAG.MAG_system.Services;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,10 +11,8 @@ import MAG.MAG_system.DTO.SubjectGetDTO;
 import MAG.MAG_system.Exception.SubjectNotFoundException;
 import MAG.MAG_system.Factory.SubjectFactory;
 import MAG.MAG_system.Model.Subject;
-import MAG.MAG_system.Model.SubjectStatus;
 import MAG.MAG_system.Repository.SubjectRepository;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.BadRequestException;
 
 @Service
 public class SubjectService {
@@ -42,9 +39,18 @@ public class SubjectService {
         return subjects;
     }
 
+    public List<SubjectGetDTO> getAllSubjects(String username, String token) throws Exception {
+        tokenService.hasAuthorization(token);
+        List<SubjectGetDTO> subjects = new ArrayList<>();
+        for (Subject subject : subjectRepository.findByUsername(username)) {
+            SubjectGetDTO sub = subjectMapper.toGetDTO(subject);
+            subjects.add(sub);
+        }
+        return subjects;
+    }
+
     public SubjectGetDTO createSubject(SubjectCreatedDTO subject, String token) throws Exception {
 
-    
         var id = tokenService.hasAuthorization(token);
         Subject sub = subjectFactory.createSubject(subject, id);
         
@@ -76,5 +82,10 @@ public class SubjectService {
         return subjectRepository.findByName(name);
     }
 
+    
+    protected List<Subject> getAllSubjectsByUsername(String username, String token) throws Exception {
+        tokenService.hasAuthorization(token);
+        return subjectRepository.findByUsername(username);
+    }
     
 }

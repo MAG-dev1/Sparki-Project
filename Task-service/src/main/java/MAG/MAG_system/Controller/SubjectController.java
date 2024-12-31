@@ -29,13 +29,22 @@ public class SubjectController {
 
 
     //basic operations
-    @GetMapping("/{id_user}")
+    @GetMapping("")
     public ResponseEntity<?> getAllSubjects(@RequestParam("id_user") @Valid Long idUser,  @RequestHeader("Authorization") String token) throws Exception {
 
         List<SubjectGetDTO> subjects = subjectService.getAllSubjects(idUser, token);
         if (subjects.isEmpty()) return ResponseEntity.noContent().build();
         return ResponseEntity.ok(subjects);
     }
+
+     //basic operations
+     @GetMapping("/getAll")
+     public ResponseEntity<?> getAllSubjects(@RequestParam("username") @Valid String username,  @RequestHeader("Authorization") String token) throws Exception {
+ 
+         List<SubjectGetDTO> subjects = subjectService.getAllSubjects(username, token);
+         if (subjects.isEmpty()) return ResponseEntity.noContent().build();
+         return ResponseEntity.ok(subjects);
+     }
 
     @PostMapping("")
     public ResponseEntity<?> createSubject(@RequestBody SubjectCreatedDTO subject, @RequestHeader("Authorization") String token) throws Exception {

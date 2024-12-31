@@ -4,17 +4,30 @@ import org.springframework.data.annotation.Id
 import jakarta.persistence.GeneratedValue
 import jakarta.validation.constraints.PastOrPresent
 import jakarta.validation.constraints.FutureOrPresent
+import jakarta.persistence.Entity;
+import jakarta.persistence.GenerationType
+import lombok.AllArgsConstructor
+import lombok.Builder
+import lombok.Data
+import lombok.NoArgsConstructor
+import java.time.LocalDateTime
 
-class Notification{
-    @Id
-    @GeneratedValue
-    Long id;
+@Entity
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+class Notification (
 
-    Long id_task;
-    
+    @jakarta.persistence.Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long,
+
+    val idTask: Long,
+
     @PastOrPresent
-    LocalDateTime created_date;
+    val created_date: LocalDateTime,
 
     @FutureOrPresent
-    LocalDateTime expired_date;
-}
+    var expired_date: LocalDateTime
+)

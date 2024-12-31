@@ -1,47 +1,79 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./Dashboard.module.css";
-import createTask from "./createTask";
-import createSubject from "./createSubject";
-
+import createTask from "./operations/createTask";
+import createSubject from "./operations/createSubject";
+import loadTasks from "./operations/loadTasks";
+import loadSubjects from "./operations/loadSubjects";
+import { useNavigate } from "react-router-dom";
 
 function Dasboard() {
-  const taskSectionRef = useRef(null);
-  const task_url = import.meta.env.VITE_BACKEND_TASK;
 
+ 
+
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tasks, setTasks] = useState([]);
 
   const [isModalOpenSubject, setIsModalOpenSubject] = useState(false);
- 
+  const [subjects, setSubjects] = useState([]);
+  const taskSectionRef = useRef(null);
+
+
+  const handleLogout = () => {
+  
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("username");
+    setSubjects([]);
+    setTasks([]);
+
+    navigate("/");
+  };
 
   useEffect(() => {
-    console.log(task_url);
-    fetch(`${task_url}/tasks`, {
-      method: "GET",
-      headers: {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("invalid request");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        if (data) {
-          console.log(data);
+
+    async function loadTask () {
+      try {
+        let data = await loadTasks();
+        if(data){
           setTasks(data);
-          localStorage.setItem("tasks", JSON.stringify(tasks));
-        } else {
-          console.log("error to get the token");
         }
-      })
-      .catch((e) => {
-        console.log("error:", e);
-      });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    async function loadSubs () {
+      try {
+        let data  = await loadSubjects();
+        if(data){
+          setSubjects(data);
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    loadSubs();
+    loadTask();
+
+    console.log(subjects);
+    const handlePopState = () => {
+      handleLogout();
+    };
+
+    // Agrega el listener al montar el componente
+    window.addEventListener("popstate", handlePopState);
+
+    // Limpia el listener al desmontar el componente
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+
+   
+
   }, []);
+
 
   function HandleaddTaskButton(e) {
     e.preventDefault();
@@ -55,18 +87,15 @@ function Dasboard() {
   const HandleAddSubjectButton = (e) => {
     e.preventDefault();
     setIsModalOpenSubject(!isModalOpenSubject);
-  }
-
+  };
 
   async function handleSubmit(e) {
-
     e.preventDefault();
 
-    const taskData = {
+    let taskData = {
       name: e.target.name.value,
       description: e.target.description.value,
       type: e.target.type.value,
-      semester: e.target.semester.value,
       days: parseInt(e.target.days.value, 10),
       importance: parseInt(e.target.importance.value, 10),
     };
@@ -74,34 +103,51 @@ function Dasboard() {
     let name_subject = e.target.subject.value;
     let data = await createTask(taskData, name_subject);
 
-    if(data){
+    if (data) {
       setTasks((prevTasks) => [...prevTasks, data]);
       toggleTaskModal();
-      
+
       e.target.reset();
-    }else {
+    } else {
       console.error("Error: Task creation failed");
     }
-
-   
   }
 
-  function createSubjectHandler(e) {
+  async function createSubjectHandler(e) {
+    e.preventDefault();
+
     let data = {
       username: localStorage.getItem("username"),
       name: e.target.name.value,
       semester: e.target.semester.value,
-      type: e.target.type.value,
+      status: e.target.status.value,
+      description: e.target.description.value,
       grade: e.target.grade.value,
-      description: e.target.description.value
+    };
+
+    let subject = await createSubject(data);
+
+    if (subject) {
+      setSubjects((prevSubjects) => [...prevSubjects, subject]);
+      console.log(subjects);
+
+      e.target.reset();
+    } else {
+      console.error("Error: Subject creation failed");
     }
-    createSubject(data);
+
+    setIsModalOpenSubject(!isModalOpenSubject);
   }
- 
+
+  function handleSubjectChange(e){
+    const selectedSubject = e.target.value;
+    console.log(selectedSubject); 
+  }
+
   return (
     <>
       <header>
-        <span id="spanUsername">Student Dashboard</span>
+        <span id="spanUsername">{localStorage.getItem('username')} Dashboard</span>
         <button>☰</button>
       </header>
       <main className={styles.main_content} id="content">
@@ -124,14 +170,14 @@ function Dasboard() {
             type="submit"
             onClick={HandleaddTaskButton}
           >
-            añadir tarea
+            Añadir tarea
           </button>
           <button
-             className={styles.button_add_subject}
+            className={styles.button_add_subject}
             type="submit"
             onClick={HandleAddSubjectButton}
           >
-            añadir Materia
+            Añadir Materia
           </button>
         </section>
         <table className={styles.table}>
@@ -195,16 +241,6 @@ function Dasboard() {
                 </select>
               </div>
               <div>
-                <label htmlFor="semester">Semester:</label>
-                <input
-                  type="text"
-                  id="semester"
-                  name="semester"
-                  placeholder="Enter semester"
-                  required
-                />
-              </div>
-              <div>
                 <label htmlFor="days">Days:</label>
                 <input
                   type="number"
@@ -226,13 +262,11 @@ function Dasboard() {
               </div>
               <div>
                 <label htmlFor="subject">Subject:</label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  placeholder="Enter subject"
-                  required
-                />
+                <select name="subject" id="subject" onChange={handleSubjectChange}>
+                  {subjects != null ?subjects.map((sub, index) => (
+                    <option key={index} value={sub.name}>{sub.name}</option>
+                  )): <option>no subjects</option>}
+                </select>
               </div>
               <button type="submit">Add Task</button>
             </form>
@@ -240,7 +274,7 @@ function Dasboard() {
         </div>
       )}
       {isModalOpenSubject && (
-         <div className={styles.modal}>
+        <div className={styles.modal}>
           <div className={styles.modal_content}>
             <span className={styles.close} onClick={HandleAddSubjectButton}>
               &times;
@@ -273,16 +307,18 @@ function Dasboard() {
                   type="text"
                   id="semester"
                   name="semester"
-                  placeholder="Enter semester"
+                  placeholder="Ej: 1-2024"
+                  pattern="[1-2]-\d{4}"
+                  title="Debe ser en formato 1-XXXX o 2-XXXX"
                   required
                 />
               </div>
               <div>
-                <label htmlFor="type">Estado:</label>
-                <select id="type" name="type" required>
+                <label htmlFor="status">Estado:</label>
+                <select id="status" name="status" required>
                   <option value="APPROVED">APPROVED</option>
                   <option value="DISAPPROVED">DISAPPROVED</option>
-                  <option value="IN_PROGRESS">IN_PROGRESS</option>       
+                  <option value="IN_PROGRESS">IN_PROGRESS</option>
                 </select>
               </div>
               <div>
@@ -295,7 +331,7 @@ function Dasboard() {
                   required
                 />
               </div>
-              <button type="submit" onClick={createSubjectHandler}>Add Subject</button>
+              <button type="submit">Add Subject</button>
             </form>
           </div>
         </div>
