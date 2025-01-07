@@ -2,10 +2,12 @@ package MAG.MAG_system.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 import org.springframework.stereotype.Component;
 
 import MAG.MAG_system.DTO.TaskCreateDTO;
+import MAG.MAG_system.DTO.TaskEditDTO;
 import MAG.MAG_system.DTO.TaskGetDTO;
 import MAG.MAG_system.Model.Subject;
 import MAG.MAG_system.Model.Task;
@@ -37,5 +39,21 @@ public class TaskMapper {
         .expired_date(LocalDateTime.now().plusDays(task.days()))
         .importance(task.importance())
         .build();
+    }
+
+    public static Task edit(TaskEditDTO task, Task taskRepo){
+
+        setField(task.name(), taskRepo::setName);
+        setField(task.semester(), taskRepo::setSemester);
+        setField(task.description(), taskRepo::setDescription);
+        setField(task.importance(), taskRepo::setImportance);
+        setField(task.type(),taskRepo::setType);
+        return taskRepo;
+    }
+
+       private static <T> void setField(T field, Consumer<T> function){
+        if (field != null) {
+            function.accept(field);
+        }
     }
 }

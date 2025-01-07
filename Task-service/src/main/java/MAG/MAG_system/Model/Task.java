@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -56,6 +58,8 @@ public class Task {
     private LocalDateTime expired_date;
 
     @Nullable
+    @Min(value = 1, message = "{validation.importance.min}")
+    @Max(value = 1000, message = "{validation.importance.min}")
     private Integer importance;
 
     

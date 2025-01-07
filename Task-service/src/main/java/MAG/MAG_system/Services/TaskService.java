@@ -83,11 +83,7 @@ public class TaskService {
         .findByNameAndSubject(taskName, subjectService.existsByName(subjectName).orElseThrow(() -> new SubjectNotFoundException("subject is invalid")).getIdSubject())
         .orElseThrow(() -> new TaskNotFoundException("task is invalid"));
 
-        setField(task.name(), taskRepo::setName);
-        setField(task.semester(), taskRepo::setSemester);
-        setField(task.description(), taskRepo::setDescription);
-        setField(task.importance(), taskRepo::setImportance);
-        setField(task.type(),taskRepo::setType);
+       taskRepo = TaskMapper.edit(task, taskRepo);
 
         taskRepository.save(taskRepo);
         return taskMapper.toGetDTO(taskRepo);
@@ -101,21 +97,15 @@ public class TaskService {
         return taskMapper.toGetDTO(taskRepo);
     }
 
-    private <T> void setField(T field, Consumer<T> function){
-        if (field != null) {
-            function.accept(field);
-        }
-    }
-
     public List<TaskGetDTO> getAllTasksByusername(String username, String token) throws Exception {
     
         ArrayList<TaskGetDTO> tasks = new ArrayList<>();
         for (Subject subject : subjectService.getAllSubjectsByUsername(username, token)) {
             if (subject.getUsername().equals(username)) {
               
-                for (Task task: subject.getTasks()) {
+                for (Task task: subject.getTasks()) 
                     tasks.add(taskMapper.toGetDTO(task));
-                }
+                
             }
         }
         return tasks;

@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,7 @@ public class Subject {
     private String name;
 
     @Nonnull
+    @Pattern(regexp = "^[1-2]-\\d{4}$", message = "Invalid semester format. Expected format: 1-YYYY or 2-YYYY")
     private String semester; // 1-YYYY or 2-YYYY
 
     @Nonnull

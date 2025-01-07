@@ -5,24 +5,24 @@ import createSubject from "./operations/createSubject";
 import loadTasks from "./operations/loadTasks";
 import loadSubjects from "./operations/loadSubjects";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../AppContext";
+import Nav from "./Nav";
 
 function Dasboard() {
-
- 
-
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [tasks, setTasks] = useState([]);
 
   const [isModalOpenSubject, setIsModalOpenSubject] = useState(false);
-  const [subjects, setSubjects] = useState([]);
-  const taskSectionRef = useRef(null);
 
+  const taskSectionRef = useRef(null);
+  const { subjects, setSubjects, tasks, setTasks } = useAppContext();
+  const [customDays, setCustomDays] = useState("");
 
   const handleLogout = () => {
-  
     localStorage.removeItem("authToken");
     localStorage.removeItem("username");
+    localStorage.removeItem("subjects");
+    localStorage.removeItem("tasks");
     setSubjects([]);
     setTasks([]);
 
@@ -30,11 +30,11 @@ function Dasboard() {
   };
 
   useEffect(() => {
-
-    async function loadTask () {
+    async function loadTask() {
       try {
         let data = await loadTasks();
-        if(data){
+        if (data) {
+          localStorage.setItem("tasks", JSON.stringify(data));
           setTasks(data);
         }
       } catch (error) {
@@ -42,13 +42,13 @@ function Dasboard() {
       }
     }
 
-    async function loadSubs () {
+    async function loadSubs() {
       try {
-        let data  = await loadSubjects();
-        if(data){
+        let data = await loadSubjects();
+        if (data) {
+          localStorage.setItem("subjects", JSON.stringify(data));
           setSubjects(data);
         }
-        
       } catch (error) {
         console.log(error);
       }
@@ -69,11 +69,7 @@ function Dasboard() {
     return () => {
       window.removeEventListener("popstate", handlePopState);
     };
-
-   
-
   }, []);
-
 
   function HandleaddTaskButton(e) {
     e.preventDefault();
@@ -92,11 +88,30 @@ function Dasboard() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    let selectedTime = e.target.type.value;
+    let daysToExpire;
+
+    switch (selectedTime) {
+      case "DAYLY":
+        daysToExpire = 1;
+        break;
+      case "WEEKLY":
+        daysToExpire = 7;
+      case "MONTHLY":
+        daysToExpire = 30;
+      case "ANNUAL":
+        daysToExpire = 365;
+      case "CUSTOM":
+        daysToExpire = e.target.days.value;
+      default:
+        break;
+    }
+
     let taskData = {
       name: e.target.name.value,
       description: e.target.description.value,
       type: e.target.type.value,
-      days: parseInt(e.target.days.value, 10),
+      days: parseInt(daysToExpire, 10),
       importance: parseInt(e.target.importance.value, 10),
     };
 
@@ -104,6 +119,10 @@ function Dasboard() {
     let data = await createTask(taskData, name_subject);
 
     if (data) {
+      if (localStorage.getItem("tasks") === null) {
+        localStorage.setItem("tasks", JSON.stringify(data));
+      }
+
       setTasks((prevTasks) => [...prevTasks, data]);
       toggleTaskModal();
 
@@ -128,6 +147,9 @@ function Dasboard() {
     let subject = await createSubject(data);
 
     if (subject) {
+      if (localStorage.getItem("subjects") === null) {
+        localStorage.setItem("subjects", JSON.stringify(data));
+      }
       setSubjects((prevSubjects) => [...prevSubjects, subject]);
       console.log(subjects);
 
@@ -139,17 +161,14 @@ function Dasboard() {
     setIsModalOpenSubject(!isModalOpenSubject);
   }
 
-  function handleSubjectChange(e){
+  function handleSubjectChange(e) {
     const selectedSubject = e.target.value;
-    console.log(selectedSubject); 
+    console.log(selectedSubject);
   }
 
   return (
     <>
-      <header>
-        <span id="spanUsername">{localStorage.getItem('username')} Dashboard</span>
-        <button>☰</button>
-      </header>
+      <Nav />
       <main className={styles.main_content} id="content">
         <section className={styles.cards}>
           <div className={styles.card}>
@@ -158,7 +177,7 @@ function Dasboard() {
           </div>
           <div className={styles.card}>
             <h3>Materias Activas</h3>
-            <p>3 Materias</p>
+            <p>{subjects.length} Materias</p>
           </div>
           <div className={styles.card}>
             <h3>Progreso Semanal</h3>
@@ -233,23 +252,33 @@ function Dasboard() {
               </div>
               <div>
                 <label htmlFor="type">Type:</label>
-                <select id="type" name="type" required>
+                <select
+                  id="type"
+                  name="type"
+                  required
+                  onChange={(e) => setCustomDays(e.target.value)}
+                >
                   <option value="DAYLY">DAYLY</option>
                   <option value="WEEKLY">WEEKLY</option>
                   <option value="MONTHLY">MONTHLY</option>
                   <option value="ANNUAL">ANNUAL</option>
+                  <option value="CUSTOM">CUSTOM</option>
                 </select>
               </div>
-              <div>
-                <label htmlFor="days">Days:</label>
-                <input
-                  type="number"
-                  id="days"
-                  name="days"
-                  placeholder="Enter number of days"
-                  required
-                />
-              </div>
+
+              {customDays == "CUSTOM" && (
+                <div>
+                  <label htmlFor="days">Days:</label>
+                  <input
+                    type="number"
+                    id="days"
+                    name="days"
+                    placeholder="Enter number of days"
+                    required
+                  />
+                </div>
+              )}
+
               <div>
                 <label htmlFor="importance">Importance:</label>
                 <input
@@ -262,10 +291,20 @@ function Dasboard() {
               </div>
               <div>
                 <label htmlFor="subject">Subject:</label>
-                <select name="subject" id="subject" onChange={handleSubjectChange}>
-                  {subjects != null ?subjects.map((sub, index) => (
-                    <option key={index} value={sub.name}>{sub.name}</option>
-                  )): <option>no subjects</option>}
+                <select
+                  name="subject"
+                  id="subject"
+                  onChange={handleSubjectChange}
+                >
+                  {subjects != null ? (
+                    subjects.map((sub, index) => (
+                      <option key={index} value={sub.name}>
+                        {sub.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option>no subjects</option>
+                  )}
                 </select>
               </div>
               <button type="submit">Add Task</button>

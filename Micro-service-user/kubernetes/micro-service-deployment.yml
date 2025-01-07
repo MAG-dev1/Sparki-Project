@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micro-service-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micro-service-user
+  template:
+    metadata:
+      labels:
+        app: micro-service-user
+    spec:
+      containers:
+      - name: micro-service-user
+        image: robotitus/micro-sevice:ultimate  # Imagen correcta
+        ports:
+        - containerPort: 8081
+      imagePullSecrets:
+        - name: regcred  # Si la imagen es privada

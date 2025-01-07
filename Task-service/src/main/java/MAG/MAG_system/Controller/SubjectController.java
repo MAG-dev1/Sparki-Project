@@ -29,7 +29,7 @@ public class SubjectController {
 
 
     //basic operations
-    @GetMapping("")
+    @GetMapping("/id")
     public ResponseEntity<?> getAllSubjects(@RequestParam("id_user") @Valid Long idUser,  @RequestHeader("Authorization") String token) throws Exception {
 
         List<SubjectGetDTO> subjects = subjectService.getAllSubjects(idUser, token);
@@ -38,7 +38,7 @@ public class SubjectController {
     }
 
      //basic operations
-     @GetMapping("/getAll")
+     @GetMapping("/username")
      public ResponseEntity<?> getAllSubjects(@RequestParam("username") @Valid String username,  @RequestHeader("Authorization") String token) throws Exception {
  
          List<SubjectGetDTO> subjects = subjectService.getAllSubjects(username, token);
